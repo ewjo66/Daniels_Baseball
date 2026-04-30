@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login — C.O.R.E. Performance</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --navy: #0A0F1E; --navy-card: #161E2E; --red: #C8102E;
+      --gold: #F5C518; --white: #F9FAFB; --gray-300: #9CA3AF;
+      --gray-500: #6B7280; --border: rgba(255,255,255,0.1);
+    }
+    body { font-family: 'Inter', sans-serif; background: var(--navy); color: var(--white); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
+    .card { background: var(--navy-card); border: 1px solid var(--border); border-radius: 16px; padding: 48px 40px; width: 100%; max-width: 440px; }
+    .logo { font-family: 'Oswald', sans-serif; font-size: 1.5rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 8px; }
+    .logo span { color: var(--red); }
+    .subtitle { color: var(--gray-300); font-size: 0.9rem; margin-bottom: 36px; }
+    .form-group { margin-bottom: 20px; }
+    label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--gray-300); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
+    input { width: 100%; padding: 13px 16px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; color: var(--white); font-size: 0.95rem; font-family: 'Inter', sans-serif; transition: border-color 0.2s; }
+    input:focus { outline: none; border-color: var(--red); }
+    input::placeholder { color: var(--gray-500); }
+    .btn { width: 100%; padding: 14px; background: var(--red); color: #fff; border: none; border-radius: 8px; font-family: 'Oswald', sans-serif; font-size: 1rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer; transition: background 0.2s, transform 0.2s; margin-top: 8px; }
+    .btn:hover { background: #A50E26; transform: translateY(-1px); }
+    .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    .links { display: flex; justify-content: space-between; margin-top: 20px; }
+    .links a { font-size: 0.85rem; color: var(--gray-300); text-decoration: none; transition: color 0.2s; }
+    .links a:hover { color: var(--white); }
+    .error { background: rgba(200,16,46,0.15); border: 1px solid rgba(200,16,46,0.4); border-radius: 8px; padding: 12px 16px; font-size: 0.875rem; color: #ff8a96; margin-bottom: 20px; display: none; }
+    .error.show { display: block; }
+    .divider { text-align: center; color: var(--gray-500); font-size: 0.8rem; margin: 24px 0; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">C.O.R.E. <span>Performance</span></div>
+    <p class="subtitle">Sign in to your member account</p>
+
+    <div class="error" id="errorMsg"></div>
+
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input type="email" id="email" placeholder="you@email.com" autocomplete="email" />
+    </div>
+
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input type="password" id="password" placeholder="••••••••" autocomplete="current-password" />
+    </div>
+
+    <button class="btn" id="loginBtn" onclick="handleLogin()">Sign In</button>
+
+    <div class="links">
+      <a href="register.html">Create account</a>
+      <a href="forgot-password.html">Forgot password?</a>
+    </div>
+  </div>
+
+  <script src="../../js/api.js"></script>
+  <script>
+    redirectIfLoggedIn();
+
+    // Check for return URL
+    const params  = new URLSearchParams(location.search);
+    const returnTo = params.get('return') || '/pages/member/dashboard.html';
+
+    async function handleLogin() {
+      const btn   = document.getElementById('loginBtn');
+      const error = document.getElementById('errorMsg');
+      const email = document.getElementById('email').value.trim();
+      const pass  = document.getElementById('password').value;
+
+      error.classList.remove('show');
+
+      if (!email || !pass) {
+        error.textContent = 'Please enter your email and password.';
+        return error.classList.add('show');
+      }
+
+      btn.disabled    = true;
+      btn.textContent = 'Signing in…';
+
+      try {
+        await api.auth.login(email, pass);
+        location.href = returnTo;
+      } catch (err) {
+        error.textContent = err.message || 'Login failed. Please try again.';
+        error.classList.add('show');
+        btn.disabled    = false;
+        btn.textContent = 'Sign In';
+      }
+    }
+
+    // Allow Enter key to submit
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') handleLogin();
+    });
+  </script>
+</body>
+</html>

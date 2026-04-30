@@ -637,6 +637,24 @@
     .form-group textarea { resize: vertical; min-height: 100px; }
     .form-submit { width: 100%; padding: 16px; font-size: 1rem; margin-top: 8px; }
 
+    /* ─── Form Alert Messages ───────────────────────────────── */
+    .form-alert {
+      display: none; padding: 14px 18px; border-radius: var(--radius);
+      font-size: 0.9rem; font-weight: 500; margin-bottom: 20px;
+      align-items: center; gap: 10px;
+    }
+    .form-alert.show { display: flex; }
+    .form-alert.success {
+      background: rgba(5,150,105,0.15);
+      border: 1px solid rgba(5,150,105,0.35);
+      color: #34D399;
+    }
+    .form-alert.error {
+      background: rgba(220,38,38,0.15);
+      border: 1px solid rgba(220,38,38,0.35);
+      color: #F87171;
+    }
+
     /* ─── Footer ────────────────────────────────────────────── */
     #footer {
       background: #070C18;
@@ -1274,38 +1292,57 @@
 
         <div class="contact-form-wrap fade-up">
           <div class="form-title">Book a Session</div>
+
+          <!-- Success / Error alerts -->
+          <div class="form-alert success" id="formSuccess">
+            <i class="fa-solid fa-circle-check"></i>
+            Message sent! A coach will follow up within 24 hours.
+          </div>
+          <div class="form-alert error" id="formError">
+            <i class="fa-solid fa-circle-exclamation"></i>
+            Something went wrong. Please try again or call us directly.
+          </div>
+
           <form id="contactForm" novalidate>
+
+            <!-- Web3Forms hidden fields — replace YOUR_ACCESS_KEY_HERE with your key -->
+            <input type="hidden" name="access_key" value="YOUR_ACCESS_KEY_HERE" />
+            <input type="hidden" name="subject" value="New Session Booking — Daniel's Baseball Academy" />
+            <input type="hidden" name="from_name" value="Daniel's Baseball Academy Website" />
+            <input type="hidden" name="replyto" id="replyToField" value="" />
+            <input type="checkbox" name="botcheck" style="display:none;" />
+
             <div class="form-row">
               <div class="form-group">
                 <label for="firstName">First Name</label>
-                <input type="text" id="firstName" placeholder="John" required />
+                <input type="text" id="firstName" name="First Name" placeholder="John" required />
               </div>
               <div class="form-group">
                 <label for="lastName">Last Name</label>
-                <input type="text" id="lastName" placeholder="Smith" required />
+                <input type="text" id="lastName" name="Last Name" placeholder="Smith" required />
               </div>
             </div>
 
             <div class="form-row">
               <div class="form-group">
                 <label for="email">Email</label>
-                <input type="email" id="email" placeholder="john@email.com" required />
+                <input type="email" id="email" name="Email" placeholder="john@email.com" required />
               </div>
               <div class="form-group">
                 <label for="phone">Phone</label>
-                <input type="tel" id="phone" placeholder="(412) 000-0000" />
+                <input type="tel" id="phone" name="Phone Number" placeholder="(412) 000-0000" />
               </div>
             </div>
 
             <div class="form-group">
               <label for="program">Program of Interest</label>
-              <select id="program">
+              <select id="program" name="Program of Interest">
                 <option value="">Select a program...</option>
                 <option>Hitting Instruction</option>
                 <option>Pitching Development</option>
-                <option>Fielding & Defense</option>
-                <option>Speed & Agility</option>
-                <option>Clinics & Camps</option>
+                <option>Fielding &amp; Defense</option>
+                <option>Speed &amp; Agility</option>
+                <option>Clinics &amp; Camps</option>
                 <option>College Prep Program</option>
                 <option>Open Cage Rental</option>
               </select>
@@ -1313,10 +1350,10 @@
 
             <div class="form-group">
               <label for="message">Message / Questions</label>
-              <textarea id="message" placeholder="Tell us about your athlete's age, experience level, goals..."></textarea>
+              <textarea id="message" name="Message" placeholder="Tell us about your athlete's age, experience level, goals..."></textarea>
             </div>
 
-            <button type="submit" class="btn btn-primary form-submit">
+            <button type="submit" class="btn btn-primary form-submit" id="submitBtn">
               Send Message — We'll Be in Touch
             </button>
           </form>
@@ -1422,20 +1459,53 @@
     fadeEls.forEach(el => observer.observe(el));
 
 
-    // Contact form handler
-    document.getElementById('contactForm').addEventListener('submit', function(e) {
+    // ─── Web3Forms Submit Handler ──────────────────────────────
+    document.getElementById('contactForm').addEventListener('submit', async function(e) {
       e.preventDefault();
-      const btn = this.querySelector('.form-submit');
-      const original = btn.innerHTML;
-      btn.innerHTML = '<i class="fa-solid fa-circle-check"></i> Message Sent! We\'ll be in touch soon.';
-      btn.style.background = '#059669';
+
+      const btn        = document.getElementById('submitBtn');
+      const successMsg = document.getElementById('formSuccess');
+      const errorMsg   = document.getElementById('formError');
+
+      // Hide any previous alerts
+      successMsg.classList.remove('show');
+      errorMsg.classList.remove('show');
+
+      // Mirror email into replyto so Web3Forms auto-replies to customer
+      document.getElementById('replyToField').value = document.getElementById('email').value;
+
+      // Loading state
+      const originalText = btn.innerHTML;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending...';
       btn.disabled = true;
-      setTimeout(() => {
-        btn.innerHTML = original;
-        btn.style.background = '';
-        btn.disabled = false;
-        this.reset();
-      }, 4000);
+
+      try {
+        const formData = new FormData(this);
+        const json     = JSON.stringify(Object.fromEntries(formData));
+
+        const response = await fetch('https://api.web3forms.com/submit', {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body:    json
+        });
+
+        const result = await response.json();
+
+        if (response.ok && result.success) {
+          successMsg.classList.add('show');
+          this.reset();
+          successMsg.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        } else {
+          throw new Error(result.message || 'Submission failed');
+        }
+
+      } catch (error) {
+        console.error('Web3Forms error:', error);
+        errorMsg.classList.add('show');
+      } finally {
+        btn.innerHTML = originalText;
+        btn.disabled  = false;
+      }
     });
 
     // Active nav link on scroll
