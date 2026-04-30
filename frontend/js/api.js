@@ -3,7 +3,7 @@
 //  All pages import this to talk to the Express backend
 // ═══════════════════════════════════════════════════════════
 
-const API_BASE = 'https://your-backend.onrender.com'; // ← update with your Render URL
+const API_BASE = '';
 
 const api = {
 
@@ -82,6 +82,18 @@ const api = {
     createIntent(booking_id)    { return api.post('/api/payments/create-intent', { booking_id }); },
     createSubscription(plan_id) { return api.post('/api/payments/create-subscription', { plan_id }); },
   },
+
+  // ─── Admin ──────────────────────────────────────────────
+  admin: {
+    stats()                   { return api.get('/api/admin/stats'); },
+    bookings()                { return api.get('/api/admin/bookings'); },
+    updateBooking(id, status) { return api.patch(`/api/admin/bookings/${id}`, { status }); },
+    users()                   { return api.get('/api/admin/users'); },
+    orders()                  { return api.get('/api/admin/orders'); },
+    slots()                   { return api.get('/api/admin/slots'); },
+    createSlot(data)          { return api.post('/api/admin/slots', data); },
+    deleteSlot(id)            { return api.delete(`/api/admin/slots/${id}`); },
+  },
 };
 
 // ─── Auth Guard ─────────────────────────────────────────────
@@ -94,6 +106,22 @@ async function requireLogin(redirectBack = true) {
   } catch (err) {
     const returnTo = redirectBack ? `?return=${encodeURIComponent(location.pathname)}` : '';
     location.href = `/pages/auth/login.html${returnTo}`;
+    return null;
+  }
+}
+
+// ─── Admin Guard ────────────────────────────────────────────
+// Call on admin pages — redirects to login if not an admin
+async function requireAdminLogin() {
+  try {
+    const { user } = await api.auth.me();
+    if (user.role !== 'admin') {
+      location.href = '/pages/auth/login.html';
+      return null;
+    }
+    return user;
+  } catch {
+    location.href = '/pages/auth/login.html';
     return null;
   }
 }

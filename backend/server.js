@@ -5,12 +5,14 @@ const pgSession    = require('connect-pg-simple')(session);
 const helmet       = require('helmet');
 const cors         = require('cors');
 const rateLimit    = require('express-rate-limit');
+const path         = require('path');
 const pool         = require('./db/pool');
 
 const authRoutes     = require('./routes/auth');
 const apiRoutes      = require('./routes/api');
 const bookingRoutes  = require('./routes/bookings');
 const paymentRoutes  = require('./routes/payments');
+const adminRoutes    = require('./routes/admin');
 
 const app  = express();
 const PORT = process.env.PORT || 3000;
@@ -69,6 +71,7 @@ app.use(session({
 
 // ─── Routes ───────────────────────────────────────────────
 app.use('/api/auth',     authRoutes);
+app.use('/api/admin',    adminRoutes);
 app.use('/api',          apiRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/payments', paymentRoutes);
@@ -77,6 +80,11 @@ app.use('/api/payments', paymentRoutes);
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
+
+// ─── Frontend Static Files ────────────────────────────────
+const frontendDir = path.join(__dirname, '../frontend');
+app.use(express.static(frontendDir));
+app.get('/', (req, res) => res.sendFile(path.join(frontendDir, 'public/index.html')));
 
 // ─── 404 ──────────────────────────────────────────────────
 app.use((req, res) => {
@@ -94,7 +102,7 @@ app.listen(PORT, () => {
   console.log(`
   ╔═══════════════════════════════════════╗
   ║   C.O.R.E. Performance API           ║
-  ║   Running on port ${PORT}               ║
+  ║   http://localhost:${PORT}              ║
   ║   ENV: ${process.env.NODE_ENV || 'development'}              ║
   ╚═══════════════════════════════════════╝
   `);

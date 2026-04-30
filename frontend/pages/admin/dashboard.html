@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin — C.O.R.E. Performance</title>
+  <meta name="robots" content="noindex,nofollow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --navy: #0A0F1E; --navy-mid: #111827; --navy-card: #161E2E; --navy-light: #1E2A3A;
+      --red: #C8102E; --red-hover: #A50E26; --gold: #F5C518;
+      --white: #F9FAFB; --gray-100: #E5E7EB; --gray-300: #9CA3AF; --gray-500: #6B7280;
+      --green: #22c55e; --border: rgba(255,255,255,0.08);
+    }
+    body { font-family: 'Inter', sans-serif; background: var(--navy); color: var(--white); min-height: 100vh; }
+
+    /* ─── Layout ─────────────────────────────────────────── */
+    .layout { display: flex; min-height: 100vh; }
+    .sidebar {
+      width: 260px; background: var(--navy-card); border-right: 1px solid var(--border);
+      padding: 24px 0; display: flex; flex-direction: column;
+      position: fixed; top: 0; left: 0; bottom: 0; z-index: 100;
+    }
+    .sidebar-logo {
+      padding: 0 24px 24px;
+      font-family: 'Oswald', sans-serif; font-size: 1rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.04em;
+      border-bottom: 1px solid var(--border);
+    }
+    .sidebar-logo span { color: var(--red); }
+    .admin-badge {
+      display: inline-block; margin-top: 6px;
+      font-size: 0.65rem; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--gold);
+      background: rgba(245,197,24,0.12); border: 1px solid rgba(245,197,24,0.25);
+      padding: 2px 8px; border-radius: 4px;
+    }
+    .sidebar-nav { padding: 20px 16px; flex: 1; }
+    .nav-label {
+      font-size: 0.68rem; font-weight: 600; color: var(--gray-500);
+      text-transform: uppercase; letter-spacing: 0.1em;
+      padding: 0 8px; margin-bottom: 6px; margin-top: 18px;
+    }
+    .nav-label:first-child { margin-top: 0; }
+    .nav-link {
+      display: flex; align-items: center; gap: 10px;
+      padding: 9px 12px; border-radius: 8px;
+      color: var(--gray-300); font-size: 0.875rem; font-weight: 500;
+      text-decoration: none; cursor: pointer; transition: all 0.2s;
+      border: none; background: none; width: 100%; text-align: left;
+    }
+    .nav-link:hover { background: rgba(255,255,255,0.06); color: var(--white); }
+    .nav-link.active { background: rgba(200,16,46,0.15); color: var(--white); }
+    .nav-link.active i { color: var(--red); }
+    .nav-link i { width: 16px; text-align: center; color: var(--gray-500); font-size: 0.875rem; }
+    .sidebar-footer {
+      padding: 16px 24px; border-top: 1px solid var(--border);
+      display: flex; align-items: center; gap: 12px;
+    }
+    .admin-avatar {
+      width: 34px; height: 34px; background: var(--red); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Oswald', sans-serif; font-size: 0.85rem; font-weight: 700;
+    }
+    .admin-name { font-size: 0.85rem; font-weight: 600; flex: 1; }
+    .logout-btn {
+      background: none; border: none; color: var(--gray-500);
+      cursor: pointer; padding: 4px; transition: color 0.2s;
+    }
+    .logout-btn:hover { color: var(--red); }
+
+    /* ─── Main ───────────────────────────────────────────── */
+    .main { margin-left: 260px; flex: 1; padding: 36px 40px; }
+    .page-header { margin-bottom: 28px; }
+    .page-title {
+      font-family: 'Oswald', sans-serif; font-size: 1.75rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: -0.01em;
+    }
+    .page-subtitle { color: var(--gray-300); font-size: 0.875rem; margin-top: 4px; }
+
+    /* ─── Stats Grid ─────────────────────────────────────── */
+    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; }
+    .stat-card {
+      background: var(--navy-card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 20px;
+    }
+    .stat-icon {
+      width: 38px; height: 38px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; margin-bottom: 14px;
+    }
+    .stat-icon.red   { background: rgba(200,16,46,0.15); color: var(--red); }
+    .stat-icon.gold  { background: rgba(245,197,24,0.12); color: var(--gold); }
+    .stat-icon.green { background: rgba(34,197,94,0.12); color: var(--green); }
+    .stat-icon.blue  { background: rgba(59,130,246,0.12); color: #60a5fa; }
+    .stat-label { font-size: 0.72rem; font-weight: 600; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; }
+    .stat-value { font-family: 'Oswald', sans-serif; font-size: 1.9rem; font-weight: 700; }
+
+    /* ─── Panel ──────────────────────────────────────────── */
+    .panel {
+      background: var(--navy-card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 24px; margin-bottom: 24px;
+    }
+    .panel-header {
+      display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;
+    }
+    .panel-title { font-family: 'Oswald', sans-serif; font-size: 1rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+
+    /* ─── Table ──────────────────────────────────────────── */
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    th {
+      text-align: left; padding: 10px 14px;
+      font-size: 0.7rem; font-weight: 600; color: var(--gray-500);
+      text-transform: uppercase; letter-spacing: 0.08em;
+      border-bottom: 1px solid var(--border);
+    }
+    td { padding: 12px 14px; border-bottom: 1px solid rgba(255,255,255,0.04); }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(255,255,255,0.02); }
+
+    /* ─── Badges ─────────────────────────────────────────── */
+    .badge {
+      display: inline-flex; align-items: center; padding: 3px 10px;
+      border-radius: 20px; font-size: 0.68rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em;
+    }
+    .badge-confirmed  { background: rgba(34,197,94,0.15); color: #4ade80; }
+    .badge-pending    { background: rgba(245,197,24,0.15); color: var(--gold); }
+    .badge-canceled   { background: rgba(107,114,128,0.15); color: var(--gray-300); }
+    .badge-completed  { background: rgba(59,130,246,0.12); color: #60a5fa; }
+    .badge-paid       { background: rgba(34,197,94,0.15); color: #4ade80; }
+    .badge-admin      { background: rgba(200,16,46,0.15); color: var(--red); }
+    .badge-member     { background: rgba(255,255,255,0.06); color: var(--gray-300); }
+
+    /* ─── Buttons ────────────────────────────────────────── */
+    .btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-family: 'Oswald', sans-serif; font-size: 0.8rem; font-weight: 600;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      padding: 7px 16px; border-radius: 6px; border: none; cursor: pointer; transition: all 0.2s;
+    }
+    .btn-primary { background: var(--red); color: #fff; }
+    .btn-primary:hover { background: var(--red-hover); }
+    .btn-sm { padding: 5px 12px; font-size: 0.72rem; }
+    .btn-confirm { background: rgba(34,197,94,0.15); color: #4ade80; border: 1px solid rgba(34,197,94,0.25); }
+    .btn-confirm:hover { background: rgba(34,197,94,0.25); }
+    .btn-cancel { background: rgba(107,114,128,0.12); color: var(--gray-300); border: 1px solid var(--border); }
+    .btn-cancel:hover { background: rgba(200,16,46,0.15); color: var(--red); border-color: rgba(200,16,46,0.3); }
+    .btn-danger { background: rgba(200,16,46,0.12); color: var(--red); border: 1px solid rgba(200,16,46,0.2); }
+    .btn-danger:hover { background: rgba(200,16,46,0.25); }
+    .btn-outline { background: transparent; color: var(--white); border: 1px solid var(--border); }
+    .btn-outline:hover { border-color: rgba(255,255,255,0.3); }
+
+    /* ─── Form ───────────────────────────────────────────── */
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-group { margin-bottom: 16px; }
+    .form-group.full { grid-column: span 2; }
+    label { display: block; font-size: 0.72rem; font-weight: 600; color: var(--gray-300); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; }
+    input, select { width: 100%; padding: 10px 14px; background: var(--navy-light); border: 1px solid var(--border); border-radius: 8px; color: var(--white); font-family: 'Inter', sans-serif; font-size: 0.875rem; transition: border-color 0.2s; }
+    input:focus, select:focus { outline: none; border-color: rgba(200,16,46,0.5); }
+    input::placeholder { color: var(--gray-500); }
+    select option { background: var(--navy-mid); }
+
+    /* ─── Empty / Loading ────────────────────────────────── */
+    .empty { text-align: center; padding: 40px; color: var(--gray-500); }
+    .empty i { font-size: 2rem; margin-bottom: 10px; display: block; opacity: 0.4; }
+    .loading { color: var(--gray-500); font-size: 0.85rem; padding: 20px 0; }
+
+    /* ─── Alert ──────────────────────────────────────────── */
+    .alert { padding: 12px 16px; border-radius: 8px; font-size: 0.85rem; margin-bottom: 16px; display: none; }
+    .alert.show { display: block; }
+    .alert-success { background: rgba(34,197,94,0.12); border: 1px solid rgba(34,197,94,0.3); color: #4ade80; }
+    .alert-error   { background: rgba(200,16,46,0.12); border: 1px solid rgba(200,16,46,0.3); color: #f87171; }
+
+    /* ─── Section visibility ─────────────────────────────── */
+    .section { display: none; }
+    .section.active { display: block; }
+  </style>
+</head>
+<body>
+<div class="layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      Daniel's <span>Baseball</span><br>
+      <span class="admin-badge">Admin Panel</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-label">Dashboard</div>
+      <button class="nav-link active" onclick="show('overview')"><i class="fa-solid fa-chart-line"></i> Overview</button>
+      <button class="nav-link" onclick="show('bookings')"><i class="fa-solid fa-calendar-check"></i> Bookings</button>
+      <button class="nav-link" onclick="show('slots')"><i class="fa-solid fa-calendar-plus"></i> Manage Slots</button>
+
+      <div class="nav-label">People</div>
+      <button class="nav-link" onclick="show('members')"><i class="fa-solid fa-users"></i> Members</button>
+      <button class="nav-link" onclick="show('orders')"><i class="fa-solid fa-receipt"></i> Orders</button>
+
+      <div class="nav-label">Site</div>
+      <a class="nav-link" href="/"><i class="fa-solid fa-house"></i> View Site</a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="admin-avatar" id="adminInitials">A</div>
+      <div class="admin-name" id="adminName">Admin</div>
+      <button class="logout-btn" onclick="handleLogout()" title="Sign out">
+        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main">
+
+    <!-- ─── Overview ─────────────────────────────── -->
+    <div id="sec-overview" class="section active">
+      <div class="page-header">
+        <h1 class="page-title">Overview</h1>
+        <p class="page-subtitle">Academy at a glance</p>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon red"><i class="fa-solid fa-users"></i></div>
+          <div class="stat-label">Total Members</div>
+          <div class="stat-value" id="statMembers">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon gold"><i class="fa-solid fa-calendar-check"></i></div>
+          <div class="stat-label">Total Bookings</div>
+          <div class="stat-value" id="statBookings">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon green"><i class="fa-solid fa-dollar-sign"></i></div>
+          <div class="stat-label">Revenue</div>
+          <div class="stat-value" id="statRevenue">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon blue"><i class="fa-solid fa-clock"></i></div>
+          <div class="stat-label">Pending Approval</div>
+          <div class="stat-value" id="statPending">—</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">Recent Bookings</span>
+          <button class="btn btn-outline btn-sm" onclick="show('bookings')">View All</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Member</th><th>Service</th><th>Date</th><th>Status</th><th>Action</th></tr>
+            </thead>
+            <tbody id="overviewBookings"><tr><td colspan="5" class="loading">Loading…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── Bookings ──────────────────────────────── -->
+    <div id="sec-bookings" class="section">
+      <div class="page-header">
+        <h1 class="page-title">All Bookings</h1>
+        <p class="page-subtitle">Confirm, cancel, or mark sessions complete</p>
+      </div>
+      <div class="panel">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Member</th><th>Service</th><th>Date & Time</th><th>Coach</th><th>Price</th><th>Status</th><th>Actions</th></tr>
+            </thead>
+            <tbody id="allBookings"><tr><td colspan="7" class="loading">Loading…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── Slots ─────────────────────────────────── -->
+    <div id="sec-slots" class="section">
+      <div class="page-header">
+        <h1 class="page-title">Manage Slots</h1>
+        <p class="page-subtitle">Create available time slots that members can book</p>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header"><span class="panel-title">Create New Slot</span></div>
+        <div class="alert alert-success" id="slotSuccess">Slot created successfully.</div>
+        <div class="alert alert-error" id="slotError"></div>
+        <form onsubmit="handleCreateSlot(event)">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Service</label>
+              <select id="slotService" required>
+                <option value="">Select a service…</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Coach Name</label>
+              <input type="text" id="slotCoach" placeholder="e.g. Marcus Rivera" />
+            </div>
+            <div class="form-group">
+              <label>Start Date & Time</label>
+              <input type="datetime-local" id="slotStart" required />
+            </div>
+            <div class="form-group">
+              <label>End Date & Time</label>
+              <input type="datetime-local" id="slotEnd" required />
+            </div>
+            <div class="form-group">
+              <label>Capacity (spots)</label>
+              <input type="number" id="slotCapacity" value="1" min="1" max="20" />
+            </div>
+            <div class="form-group" style="display:flex;align-items:flex-end;">
+              <button type="submit" class="btn btn-primary" style="width:100%;">
+                <i class="fa-solid fa-plus"></i> Create Slot
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header"><span class="panel-title">Upcoming Slots</span></div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Service</th><th>Coach</th><th>Start</th><th>End</th><th>Spots</th><th>Action</th></tr>
+            </thead>
+            <tbody id="slotsList"><tr><td colspan="6" class="loading">Loading…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── Members ───────────────────────────────── -->
+    <div id="sec-members" class="section">
+      <div class="page-header">
+        <h1 class="page-title">Members</h1>
+        <p class="page-subtitle">All registered accounts</p>
+      </div>
+      <div class="panel">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Name</th><th>Email</th><th>Phone</th><th>Role</th><th>Bookings</th><th>Joined</th></tr>
+            </thead>
+            <tbody id="membersList"><tr><td colspan="6" class="loading">Loading…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── Orders ────────────────────────────────── -->
+    <div id="sec-orders" class="section">
+      <div class="page-header">
+        <h1 class="page-title">Orders</h1>
+        <p class="page-subtitle">All purchases and payments</p>
+      </div>
+      <div class="panel">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Member</th><th>Type</th><th>Amount</th><th>Status</th><th>Date</th></tr>
+            </thead>
+            <tbody id="ordersList"><tr><td colspan="5" class="loading">Loading…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script src="../../js/api.js"></script>
+<script>
+let allBookingsCache = [];
+let services = [];
+
+async function init() {
+  const user = await requireAdminLogin();
+  if (!user) return;
+
+  document.getElementById('adminName').textContent     = `${user.first_name} ${user.last_name}`;
+  document.getElementById('adminInitials').textContent = user.first_name[0] + user.last_name[0];
+
+  loadStats();
+  loadOverviewBookings();
+  loadServices();
+}
+
+// ─── Navigation ─────────────────────────────────────────────
+function show(section) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+
+  document.getElementById(`sec-${section}`).classList.add('active');
+  document.querySelectorAll('.nav-link').forEach(l => {
+    if (l.textContent.trim().toLowerCase().includes(section === 'overview' ? 'overview' :
+        section === 'bookings' ? 'bookings' :
+        section === 'slots'    ? 'slots' :
+        section === 'members'  ? 'members' : 'orders')) {
+      l.classList.add('active');
+    }
+  });
+
+  const loaders = {
+    bookings: loadAllBookings,
+    slots:    loadSlots,
+    members:  loadMembers,
+    orders:   loadOrders,
+  };
+  if (loaders[section]) loaders[section]();
+}
+
+// ─── Stats ──────────────────────────────────────────────────
+async function loadStats() {
+  try {
+    const data = await api.admin.stats();
+    document.getElementById('statMembers').textContent  = data.total_members;
+    document.getElementById('statBookings').textContent = data.total_bookings;
+    document.getElementById('statRevenue').textContent  = formatPrice(data.total_revenue_cents);
+    document.getElementById('statPending').textContent  = data.pending_bookings;
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+// ─── Bookings ────────────────────────────────────────────────
+async function loadOverviewBookings() {
+  try {
+    const { bookings } = await api.admin.bookings();
+    allBookingsCache = bookings;
+    const tbody = document.getElementById('overviewBookings');
+    if (!bookings.length) {
+      tbody.innerHTML = `<tr><td colspan="5"><div class="empty"><i class="fa-regular fa-calendar"></i>No bookings yet.</div></td></tr>`;
+      return;
+    }
+    tbody.innerHTML = bookings.slice(0, 8).map(b => `
+      <tr>
+        <td><strong>${b.first_name} ${b.last_name}</strong><br><span style="color:var(--gray-500);font-size:0.78rem">${b.email}</span></td>
+        <td>${b.service_name}</td>
+        <td>${formatDate(b.starts_at)}</td>
+        <td><span class="badge badge-${b.status}">${b.status}</span></td>
+        <td>${bookingActions(b)}</td>
+      </tr>
+    `).join('');
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+async function loadAllBookings() {
+  try {
+    const { bookings } = await api.admin.bookings();
+    allBookingsCache = bookings;
+    const tbody = document.getElementById('allBookings');
+    if (!bookings.length) {
+      tbody.innerHTML = `<tr><td colspan="7"><div class="empty"><i class="fa-regular fa-calendar"></i>No bookings yet.</div></td></tr>`;
+      return;
+    }
+    tbody.innerHTML = bookings.map(b => `
+      <tr id="booking-row-${b.id}">
+        <td><strong>${b.first_name} ${b.last_name}</strong><br><span style="color:var(--gray-500);font-size:0.78rem">${b.email}</span></td>
+        <td>${b.service_name}</td>
+        <td>${formatDate(b.starts_at)}</td>
+        <td>${b.coach_name || '—'}</td>
+        <td>${formatPrice(b.price_cents)}</td>
+        <td><span class="badge badge-${b.status}" id="badge-${b.id}">${b.status}</span></td>
+        <td>${bookingActions(b)}</td>
+      </tr>
+    `).join('');
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+function bookingActions(b) {
+  const actions = [];
+  if (b.status === 'pending')   actions.push(`<button class="btn btn-confirm btn-sm" onclick="updateBooking(${b.id},'confirmed')">Confirm</button>`);
+  if (b.status === 'confirmed') actions.push(`<button class="btn btn-confirm btn-sm" onclick="updateBooking(${b.id},'completed')">Complete</button>`);
+  if (b.status !== 'canceled' && b.status !== 'completed')
+    actions.push(`<button class="btn btn-cancel btn-sm" onclick="updateBooking(${b.id},'canceled')">Cancel</button>`);
+  return actions.join(' ') || '—';
+}
+
+async function updateBooking(id, status) {
+  try {
+    await api.admin.updateBooking(id, status);
+    // Refresh whichever view is active
+    loadOverviewBookings();
+    if (!document.getElementById('sec-bookings').classList.contains('active')) return;
+    loadAllBookings();
+    loadStats();
+  } catch (e) {
+    alert('Failed to update booking.');
+  }
+}
+
+// ─── Services (for slot form dropdown) ───────────────────────
+async function loadServices() {
+  try {
+    const { services: list } = await api.services.list();
+    services = list;
+    const sel = document.getElementById('slotService');
+    list.forEach(s => {
+      const opt = document.createElement('option');
+      opt.value = s.id;
+      opt.textContent = s.name;
+      sel.appendChild(opt);
+    });
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+// ─── Slots ───────────────────────────────────────────────────
+async function loadSlots() {
+  try {
+    const { slots } = await api.admin.slots();
+    const tbody = document.getElementById('slotsList');
+    if (!slots.length) {
+      tbody.innerHTML = `<tr><td colspan="6"><div class="empty"><i class="fa-regular fa-calendar-xmark"></i>No upcoming slots. Create one above.</div></td></tr>`;
+      return;
+    }
+    tbody.innerHTML = slots.map(s => `
+      <tr>
+        <td>${s.service_name}</td>
+        <td>${s.coach_name || '—'}</td>
+        <td>${formatDate(s.starts_at)}</td>
+        <td>${formatDate(s.ends_at)}</td>
+        <td>${s.spots_remaining} / ${s.capacity}</td>
+        <td><button class="btn btn-danger btn-sm" onclick="deleteSlot(${s.id})"><i class="fa-solid fa-trash"></i></button></td>
+      </tr>
+    `).join('');
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+async function handleCreateSlot(e) {
+  e.preventDefault();
+  const successEl = document.getElementById('slotSuccess');
+  const errorEl   = document.getElementById('slotError');
+  successEl.classList.remove('show');
+  errorEl.classList.remove('show');
+
+  try {
+    await api.admin.createSlot({
+      service_id:  document.getElementById('slotService').value,
+      coach_name:  document.getElementById('slotCoach').value,
+      starts_at:   document.getElementById('slotStart').value,
+      ends_at:     document.getElementById('slotEnd').value,
+      capacity:    parseInt(document.getElementById('slotCapacity').value) || 1,
+    });
+    successEl.classList.add('show');
+    e.target.reset();
+    loadSlots();
+  } catch (err) {
+    errorEl.textContent = err.message || 'Failed to create slot.';
+    errorEl.classList.add('show');
+  }
+}
+
+async function deleteSlot(id) {
+  if (!confirm('Remove this slot? Members who have already booked it will not be automatically notified.')) return;
+  try {
+    await api.admin.deleteSlot(id);
+    loadSlots();
+  } catch (e) {
+    alert('Failed to remove slot.');
+  }
+}
+
+// ─── Members ─────────────────────────────────────────────────
+async function loadMembers() {
+  try {
+    const { users } = await api.admin.users();
+    const tbody = document.getElementById('membersList');
+    if (!users.length) {
+      tbody.innerHTML = `<tr><td colspan="6"><div class="empty"><i class="fa-solid fa-users"></i>No members yet.</div></td></tr>`;
+      return;
+    }
+    tbody.innerHTML = users.map(u => `
+      <tr>
+        <td><strong>${u.first_name} ${u.last_name}</strong></td>
+        <td>${u.email}</td>
+        <td>${u.phone || '—'}</td>
+        <td><span class="badge badge-${u.role}">${u.role}</span></td>
+        <td>${u.total_bookings}</td>
+        <td style="color:var(--gray-500)">${formatShortDate(u.created_at)}</td>
+      </tr>
+    `).join('');
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+// ─── Orders ──────────────────────────────────────────────────
+async function loadOrders() {
+  try {
+    const { orders } = await api.admin.orders();
+    const tbody = document.getElementById('ordersList');
+    if (!orders.length) {
+      tbody.innerHTML = `<tr><td colspan="5"><div class="empty"><i class="fa-solid fa-receipt"></i>No orders yet.</div></td></tr>`;
+      return;
+    }
+    tbody.innerHTML = orders.map(o => `
+      <tr>
+        <td><strong>${o.first_name} ${o.last_name}</strong><br><span style="color:var(--gray-500);font-size:0.78rem">${o.email}</span></td>
+        <td style="text-transform:capitalize">${o.type}</td>
+        <td>${formatPrice(o.total_cents)}</td>
+        <td><span class="badge badge-${o.status}">${o.status}</span></td>
+        <td style="color:var(--gray-500)">${formatShortDate(o.created_at)}</td>
+      </tr>
+    `).join('');
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+// ─── Logout ──────────────────────────────────────────────────
+async function handleLogout() {
+  await api.auth.logout();
+  location.href = '/pages/auth/login.html';
+}
+
+// ─── Helpers ─────────────────────────────────────────────────
+function formatDate(iso) {
+  return new Date(iso).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+}
+function formatShortDate(iso) {
+  return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+function formatPrice(cents) {
+  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(cents / 100);
+}
+
+init();
+</script>
+</body>
+</html>

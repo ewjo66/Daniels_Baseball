@@ -1,0 +1,16 @@
+User-agent: *
+
+# Allow public pages
+Allow: /$
+Allow: /pages/programs/
+
+# Block all private/member/admin areas
+Disallow: /pages/auth/
+Disallow: /pages/member/
+Disallow: /pages/booking/
+Disallow: /pages/admin/
+
+# Block API
+Disallow: /api/
+
+Sitemap: https://www.coreperformancebaseball.com/sitemap.xml
