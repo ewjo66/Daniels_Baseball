@@ -6,7 +6,9 @@ const helmet       = require('helmet');
 const cors         = require('cors');
 const rateLimit    = require('express-rate-limit');
 const path         = require('path');
+const morgan       = require('morgan');
 const pool         = require('./db/pool');
+const logger       = require('./utils/logger');
 
 const authRoutes     = require('./routes/auth');
 const apiRoutes      = require('./routes/api');
@@ -16,6 +18,9 @@ const adminRoutes    = require('./routes/admin');
 
 const app  = express();
 const PORT = process.env.PORT || 3000;
+
+// ─── HTTP Request Logging ─────────────────────────────────
+app.use(morgan('dev', { stream: { write: msg => logger.http(msg.trim()) } }));
 
 // ─── Security ─────────────────────────────────────────────
 app.use(helmet({
@@ -93,19 +98,13 @@ app.use((req, res) => {
 
 // ─── Global Error Handler ─────────────────────────────────
 app.use((err, req, res, next) => {
-  console.error('Unhandled error:', err);
+  logger.error(err.stack || err.message || err);
   res.status(500).json({ error: 'An unexpected error occurred.' });
 });
 
 // ─── Start ────────────────────────────────────────────────
 app.listen(PORT, () => {
-  console.log(`
-  ╔═══════════════════════════════════════╗
-  ║   C.O.R.E. Performance API           ║
-  ║   http://localhost:${PORT}              ║
-  ║   ENV: ${process.env.NODE_ENV || 'development'}              ║
-  ╚═══════════════════════════════════════╝
-  `);
+  logger.info(`C.O.R.E. Performance API running on http://localhost:${PORT} [${process.env.NODE_ENV || 'development'}]`);
 });
 
 module.exports = app;

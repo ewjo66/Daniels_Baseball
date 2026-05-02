@@ -1,5 +1,11 @@
-const { createLogger, format, transports } = require('winston');
+const { createLogger, format, transports, addColors } = require('winston');
 const path = require('path');
+const fs   = require('fs');
+
+const logsDir = path.join(__dirname, '../logs');
+if (!fs.existsSync(logsDir)) fs.mkdirSync(logsDir, { recursive: true });
+
+addColors({ http: 'magenta' });
 
 const { combine, timestamp, printf, colorize, errors } = format;
 
@@ -12,7 +18,7 @@ const fileFormat = printf(({ level, message, timestamp, stack }) => {
 });
 
 const logger = createLogger({
-  level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
+  level: process.env.NODE_ENV === 'production' ? 'info' : 'http',
   format: combine(
     timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
     errors({ stack: true })
