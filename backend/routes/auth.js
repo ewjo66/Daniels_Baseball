@@ -54,7 +54,11 @@ router.post('/register', validate(registerSchema), async (req, res) => {
 
     const user = result.rows[0];
 
-    // Log them in immediately after registering
+    // Regenerate session ID to prevent session fixation
+    await new Promise((resolve, reject) =>
+      req.session.regenerate(err => err ? reject(err) : resolve())
+    );
+
     req.session.userId = user.id;
     req.session.role   = user.role;
 
@@ -101,6 +105,11 @@ router.post('/login', async (req, res) => {
     if (!match) {
       return res.status(401).json({ error: 'Invalid email or password.' });
     }
+
+    // Regenerate session ID to prevent session fixation
+    await new Promise((resolve, reject) =>
+      req.session.regenerate(err => err ? reject(err) : resolve())
+    );
 
     req.session.userId = user.id;
     req.session.role   = user.role;
