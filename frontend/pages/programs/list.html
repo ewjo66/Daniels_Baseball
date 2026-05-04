@@ -14,57 +14,8 @@
   <link rel="canonical" href="https://www.danielsbaseballacademy.com/pages/programs/list.html" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --navy: #0A0F1E; --navy-card: #161E2E; --navy-light: #1E2A3A;
-      --red: #C8102E; --gold: #F5C518; --white: #F9FAFB;
-      --gray-300: #9CA3AF; --gray-500: #6B7280; --border: rgba(255,255,255,0.08);
-    }
-    body { font-family: 'Inter', sans-serif; background: var(--navy); color: var(--white); min-height: 100vh; }
-
-    /* Nav */
-    .topnav { background: var(--navy-card); border-bottom: 1px solid var(--border); padding: 0 40px; display: flex; align-items: center; justify-content: space-between; height: 64px; }
-    .topnav-logo { font-family: 'Oswald', sans-serif; font-size: 1.1rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; text-decoration: none; color: var(--white); }
-    .topnav-logo span { color: var(--red); }
-    .topnav-links { display: flex; align-items: center; gap: 24px; }
-    .topnav-links a { font-size: 0.875rem; color: var(--gray-300); text-decoration: none; transition: color 0.2s; }
-    .topnav-links a:hover { color: var(--white); }
-    .topnav-links a.btn-nav { background: var(--red); color: #fff; padding: 8px 18px; border-radius: 6px; font-weight: 600; }
-    .topnav-links a.btn-nav:hover { background: #A50E26; color: #fff; }
-
-    /* Hero */
-    .hero { padding: 64px 40px 48px; text-align: center; border-bottom: 1px solid var(--border); }
-    .hero-tag { display: inline-block; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em; color: var(--red); background: rgba(200,16,46,0.1); padding: 4px 14px; border-radius: 20px; margin-bottom: 20px; }
-    .hero-title { font-family: 'Oswald', sans-serif; font-size: 2.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: -0.01em; margin-bottom: 16px; }
-    .hero-title span { color: var(--red); }
-    .hero-sub { color: var(--gray-300); max-width: 520px; margin: 0 auto; line-height: 1.6; }
-
-    /* Grid */
-    .container { max-width: 1100px; margin: 0 auto; padding: 48px 40px; }
-    .programs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px; }
-
-    .program-card { background: var(--navy-card); border: 1px solid var(--border); border-radius: 16px; padding: 28px; display: flex; flex-direction: column; transition: border-color 0.2s, transform 0.2s; }
-    .program-card:hover { border-color: rgba(200,16,46,0.4); transform: translateY(-2px); }
-    .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
-    .card-icon { width: 48px; height: 48px; background: rgba(200,16,46,0.12); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--red); font-size: 1.2rem; }
-    .badges { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
-    .badge { display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 20px; font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; }
-    .badge-free { background: rgba(34,197,94,0.12); color: #4ade80; }
-    .badge-paid { background: rgba(245,197,24,0.12); color: var(--gold); }
-    .badge-members { background: rgba(200,16,46,0.12); color: #ff8a96; }
-    .program-name { font-family: 'Oswald', sans-serif; font-size: 1.2rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.02em; margin-bottom: 10px; }
-    .program-desc { font-size: 0.875rem; color: var(--gray-300); line-height: 1.6; margin-bottom: 20px; flex: 1; }
-    .card-footer { display: flex; justify-content: space-between; align-items: center; padding-top: 16px; border-top: 1px solid var(--border); }
-    .card-duration { font-size: 0.8rem; color: var(--gray-500); }
-    .card-link { display: inline-flex; align-items: center; gap: 6px; background: var(--red); color: #fff; padding: 9px 18px; border-radius: 8px; font-family: 'Oswald', sans-serif; font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; text-decoration: none; transition: background 0.2s; }
-    .card-link:hover { background: #A50E26; }
-
-    .empty { text-align: center; padding: 64px 24px; color: var(--gray-500); }
-    .empty i { font-size: 2.5rem; margin-bottom: 16px; display: block; }
-    .loading { text-align: center; padding: 64px; color: var(--gray-500); }
-  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" />
+  <link rel="stylesheet" href="../../css/programs-list.css" />
 </head>
 <body>
 
@@ -85,57 +36,11 @@
 
   <div class="container">
     <div class="programs-grid" id="programsGrid">
-      <div class="loading"><i class="fa-solid fa-spinner fa-spin" style="font-size:1.5rem;margin-bottom:12px;display:block"></i>Loading programs…</div>
+      <div class="loading"><i class="fa-solid fa-spinner fa-spin spinner-icon"></i>Loading programs…</div>
     </div>
   </div>
 
   <script src="../../js/api.js"></script>
-  <script>
-    async function load() {
-      try {
-        const { programs } = await api.programs.list();
-        const grid = document.getElementById('programsGrid');
-
-        if (programs.length === 0) {
-          grid.innerHTML = `<div class="empty" style="grid-column:1/-1"><i class="fa-solid fa-dumbbell"></i>No programs available yet. Check back soon.</div>`;
-          return;
-        }
-
-        grid.innerHTML = programs.map(p => {
-          const isFree    = p.price_cents === 0;
-          const priceBadge = isFree
-            ? `<span class="badge badge-free">Free</span>`
-            : `<span class="badge badge-paid">${formatPrice(p.price_cents)}</span>`;
-          const memberBadge = p.members_only
-            ? `<span class="badge badge-members"><i class="fa-solid fa-lock" style="margin-right:4px;font-size:0.6rem"></i>Members Only</span>`
-            : '';
-          const duration = p.duration_days
-            ? `${p.duration_days}-day program`
-            : 'Ongoing program';
-
-          return `
-            <div class="program-card">
-              <div class="card-top">
-                <div class="card-icon"><i class="fa-solid fa-chart-line"></i></div>
-                <div class="badges">${priceBadge}${memberBadge}</div>
-              </div>
-              <div class="program-name">${p.name}</div>
-              <div class="program-desc">${p.description || 'A structured training program to help you reach your next level.'}</div>
-              <div class="card-footer">
-                <span class="card-duration"><i class="fa-regular fa-clock" style="margin-right:4px"></i>${duration}</span>
-                <a class="card-link" href="detail.html?slug=${p.slug}">View Program <i class="fa-solid fa-arrow-right"></i></a>
-              </div>
-            </div>
-          `;
-        }).join('');
-
-      } catch (err) {
-        document.getElementById('programsGrid').innerHTML =
-          `<div class="empty" style="grid-column:1/-1"><i class="fa-solid fa-circle-exclamation"></i>Failed to load programs. Please try again.</div>`;
-      }
-    }
-
-    load();
-  </script>
+  <script src="../../js/pages/programs-list.js"></script>
 </body>
 </html>

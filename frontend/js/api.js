@@ -127,11 +127,13 @@ async function requireAdminLogin() {
 }
 
 // ─── Auth Redirect ──────────────────────────────────────────
-// Call on login/register pages — redirects to member dashboard if already logged in
-async function redirectIfLoggedIn(dest = '/pages/member/dashboard.html') {
+// Call on login/register pages — redirects away if already logged in
+async function redirectIfLoggedIn() {
   try {
-    await api.auth.me();
-    location.href = dest;
+    const { user } = await api.auth.me();
+    location.href = user.role === 'admin'
+      ? '/pages/admin/dashboard.html'
+      : '/pages/member/dashboard.html';
   } catch {
     // Not logged in — stay on the page
   }
@@ -165,4 +167,14 @@ function formatDate(isoString) {
     weekday: 'short', month: 'short', day: 'numeric',
     hour: 'numeric', minute: '2-digit'
   });
+}
+
+// ─── HTML escape ─────────────────────────────────────────────
+function esc(str) {
+  return String(str ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
 }

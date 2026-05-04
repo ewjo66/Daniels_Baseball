@@ -7,52 +7,8 @@
   <meta name="robots" content="noindex,nofollow" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --navy: #0A0F1E; --navy-card: #161E2E; --red: #C8102E;
-      --gold: #F5C518; --white: #F9FAFB; --gray-300: #9CA3AF;
-      --gray-500: #6B7280; --border: rgba(255,255,255,0.1);
-    }
-    body { font-family: 'Inter', sans-serif; background: var(--navy); color: var(--white); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
-    .card { background: var(--navy-card); border: 1px solid var(--border); border-radius: 16px; padding: 40px; width: 100%; max-width: 520px; }
-    .back-link { display: inline-flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--gray-300); text-decoration: none; margin-bottom: 28px; transition: color 0.2s; }
-    .back-link:hover { color: var(--white); }
-    .logo { font-family: 'Oswald', sans-serif; font-size: 1.1rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 24px; }
-    .logo span { color: var(--red); }
-
-    .booking-summary { background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 28px; }
-    .summary-title { font-family: 'Oswald', sans-serif; font-size: 1.3rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.02em; margin-bottom: 16px; }
-    .summary-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 0.875rem; }
-    .summary-row:last-child { border-bottom: none; }
-    .summary-label { color: var(--gray-300); }
-    .summary-value { font-weight: 600; }
-    .summary-price { font-family: 'Oswald', sans-serif; font-size: 1.4rem; font-weight: 700; color: var(--gold); }
-
-    .form-group { margin-bottom: 20px; }
-    label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--gray-300); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
-    textarea { width: 100%; padding: 13px 16px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; color: var(--white); font-size: 0.95rem; font-family: 'Inter', sans-serif; resize: vertical; min-height: 90px; transition: border-color 0.2s; }
-    textarea:focus { outline: none; border-color: var(--red); }
-    textarea::placeholder { color: var(--gray-500); }
-
-    .payment-note { background: rgba(245,197,24,0.08); border: 1px solid rgba(245,197,24,0.25); border-radius: 8px; padding: 14px 16px; font-size: 0.8rem; color: #d4a800; margin-bottom: 24px; display: flex; gap: 10px; align-items: flex-start; }
-    .payment-note i { margin-top: 1px; flex-shrink: 0; }
-
-    .btn { width: 100%; padding: 14px; background: var(--red); color: #fff; border: none; border-radius: 8px; font-family: 'Oswald', sans-serif; font-size: 1rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer; transition: background 0.2s, transform 0.2s; }
-    .btn:hover { background: #A50E26; transform: translateY(-1px); }
-    .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
-
-    .error { background: rgba(200,16,46,0.15); border: 1px solid rgba(200,16,46,0.4); border-radius: 8px; padding: 12px 16px; font-size: 0.875rem; color: #ff8a96; margin-bottom: 20px; display: none; }
-    .error.show { display: block; }
-
-    .success { text-align: center; padding: 16px 0; display: none; }
-    .success.show { display: block; }
-    .success-icon { font-size: 3rem; color: #4ade80; margin-bottom: 16px; }
-    .success-title { font-family: 'Oswald', sans-serif; font-size: 1.4rem; font-weight: 700; text-transform: uppercase; margin-bottom: 8px; }
-    .success-text { color: var(--gray-300); font-size: 0.9rem; margin-bottom: 24px; }
-    .success-link { display: inline-block; background: var(--red); color: #fff; padding: 12px 28px; border-radius: 8px; text-decoration: none; font-family: 'Oswald', sans-serif; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
-  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" />
+  <link rel="stylesheet" href="../../css/booking-form.css" />
 </head>
 <body>
   <div class="card">
@@ -63,11 +19,11 @@
       <div class="booking-summary">
         <div class="summary-title" id="summaryService">—</div>
         <div class="summary-row">
-          <span class="summary-label"><i class="fa-regular fa-calendar" style="margin-right:6px"></i>Date & Time</span>
+          <span class="summary-label"><i class="fa-regular fa-calendar icon-mr"></i>Date & Time</span>
           <span class="summary-value" id="summaryDateTime">—</span>
         </div>
         <div class="summary-row">
-          <span class="summary-label"><i class="fa-solid fa-user" style="margin-right:6px"></i>Coach</span>
+          <span class="summary-label"><i class="fa-solid fa-user icon-mr"></i>Coach</span>
           <span class="summary-value" id="summaryCoach">—</span>
         </div>
         <div class="summary-row">
@@ -79,7 +35,7 @@
       <div class="error" id="errorMsg"></div>
 
       <div class="form-group">
-        <label for="notes">Notes for your coach <span style="color:var(--gray-500);font-weight:400;text-transform:none">(optional)</span></label>
+        <label for="notes">Notes for your coach <span class="label-hint">(optional)</span></label>
         <textarea id="notes" placeholder="Any goals, injuries, or things you'd like to focus on…"></textarea>
       </div>
 
@@ -88,7 +44,7 @@
         <span>Your booking will be reserved as <strong>pending</strong>. Payment processing will be available once Stripe is connected.</span>
       </div>
 
-      <button class="btn" id="bookBtn" onclick="handleBook()">Confirm Booking</button>
+      <button class="btn" id="bookBtn">Confirm Booking</button>
     </div>
 
     <div class="success" id="successArea">
@@ -100,59 +56,6 @@
   </div>
 
   <script src="../../js/api.js"></script>
-  <script>
-    const params = new URLSearchParams(location.search);
-    const slot_id      = params.get('slot_id');
-    const serviceName  = params.get('service_name') || 'Session';
-    const startsAt     = params.get('starts_at');
-    const endsAt       = params.get('ends_at');
-    const priceCents   = parseInt(params.get('price_cents') || '0', 10);
-    const coachName    = params.get('coach_name') || 'TBD';
-
-    async function init() {
-      await requireLogin();
-
-      if (!slot_id) {
-        location.href = 'calendar.html';
-        return;
-      }
-
-      document.getElementById('summaryService').textContent  = serviceName;
-      document.getElementById('summaryCoach').textContent    = coachName || 'TBD';
-      document.getElementById('summaryPrice').textContent    = formatPrice(priceCents);
-
-      if (startsAt && endsAt) {
-        const start = new Date(startsAt);
-        const end   = new Date(endsAt);
-        document.getElementById('summaryDateTime').textContent =
-          start.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) +
-          ' · ' + start.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }) +
-          ' – ' + end.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
-      }
-    }
-
-    async function handleBook() {
-      const btn   = document.getElementById('bookBtn');
-      const error = document.getElementById('errorMsg');
-      const notes = document.getElementById('notes').value.trim();
-
-      error.classList.remove('show');
-      btn.disabled    = true;
-      btn.textContent = 'Reserving…';
-
-      try {
-        await api.bookings.create(parseInt(slot_id, 10), notes || null);
-        document.getElementById('formArea').style.display = 'none';
-        document.getElementById('successArea').classList.add('show');
-      } catch (err) {
-        error.textContent = err.message || 'Failed to create booking. Please try again.';
-        error.classList.add('show');
-        btn.disabled    = false;
-        btn.textContent = 'Confirm Booking';
-      }
-    }
-
-    init();
-  </script>
+  <script src="../../js/pages/booking-form.js"></script>
 </body>
 </html>

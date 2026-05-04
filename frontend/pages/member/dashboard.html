@@ -7,83 +7,8 @@
   <meta name="robots" content="noindex,nofollow" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --navy: #0A0F1E; --navy-mid: #111827; --navy-card: #161E2E; --navy-light: #1E2A3A;
-      --red: #C8102E; --gold: #F5C518; --white: #F9FAFB;
-      --gray-100: #E5E7EB; --gray-300: #9CA3AF; --gray-500: #6B7280;
-      --border: rgba(255,255,255,0.08);
-    }
-    body { font-family: 'Inter', sans-serif; background: var(--navy); color: var(--white); min-height: 100vh; }
-
-    /* Sidebar */
-    .layout { display: flex; min-height: 100vh; }
-    .sidebar { width: 260px; background: var(--navy-card); border-right: 1px solid var(--border); padding: 24px 0; display: flex; flex-direction: column; position: fixed; top: 0; left: 0; bottom: 0; z-index: 100; }
-    .sidebar-logo { padding: 0 24px 32px; font-family: 'Oswald', sans-serif; font-size: 1.1rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; border-bottom: 1px solid var(--border); }
-    .sidebar-logo span { color: var(--red); }
-    .sidebar-nav { padding: 24px 16px; flex: 1; }
-    .nav-label { font-size: 0.7rem; font-weight: 600; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.1em; padding: 0 8px; margin-bottom: 8px; margin-top: 20px; }
-    .nav-label:first-child { margin-top: 0; }
-    .nav-link { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 8px; color: var(--gray-300); font-size: 0.9rem; font-weight: 500; text-decoration: none; transition: all 0.2s; cursor: pointer; }
-    .nav-link:hover { background: rgba(255,255,255,0.06); color: var(--white); }
-    .nav-link.active { background: rgba(200,16,46,0.15); color: var(--white); }
-    .nav-link.active i { color: var(--red); }
-    .nav-link i { width: 18px; text-align: center; color: var(--gray-500); }
-    .sidebar-user { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; align-items: center; gap: 12px; }
-    .user-avatar { width: 36px; height: 36px; background: var(--red); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 0.9rem; }
-    .user-info { flex: 1; min-width: 0; }
-    .user-name { font-size: 0.875rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .user-role { font-size: 0.75rem; color: var(--gray-500); }
-    .logout-btn { background: none; border: none; color: var(--gray-500); cursor: pointer; padding: 4px; transition: color 0.2s; }
-    .logout-btn:hover { color: var(--red); }
-
-    /* Main */
-    .main { margin-left: 260px; flex: 1; padding: 40px; }
-    .page-header { margin-bottom: 32px; }
-    .page-title { font-family: 'Oswald', sans-serif; font-size: 2rem; font-weight: 700; text-transform: uppercase; letter-spacing: -0.01em; }
-    .page-subtitle { color: var(--gray-300); margin-top: 6px; }
-
-    /* Stats Grid */
-    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 32px; }
-    .stat-card { background: var(--navy-card); border: 1px solid var(--border); border-radius: 12px; padding: 24px; }
-    .stat-label { font-size: 0.75rem; font-weight: 600; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
-    .stat-value { font-family: 'Oswald', sans-serif; font-size: 2rem; font-weight: 700; }
-    .stat-value.red { color: var(--red); }
-    .stat-value.gold { color: var(--gold); }
-    .stat-sub { font-size: 0.8rem; color: var(--gray-500); margin-top: 4px; }
-
-    /* Content Panels */
-    .panel { background: var(--navy-card); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 24px; }
-    .panel-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
-    .panel-title { font-family: 'Oswald', sans-serif; font-size: 1.1rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
-    .panel-link { font-size: 0.8rem; color: var(--red); text-decoration: none; font-weight: 500; }
-    .panel-link:hover { text-decoration: underline; }
-
-    /* Booking row */
-    .booking-row { display: flex; align-items: center; gap: 16px; padding: 14px 0; border-bottom: 1px solid var(--border); }
-    .booking-row:last-child { border-bottom: none; }
-    .booking-icon { width: 40px; height: 40px; background: rgba(200,16,46,0.15); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--red); flex-shrink: 0; }
-    .booking-info { flex: 1; }
-    .booking-name { font-weight: 600; font-size: 0.9rem; }
-    .booking-meta { font-size: 0.8rem; color: var(--gray-500); margin-top: 2px; }
-    .badge { display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
-    .badge-confirmed { background: rgba(34,197,94,0.15); color: #4ade80; }
-    .badge-pending { background: rgba(245,197,24,0.15); color: var(--gold); }
-    .badge-canceled { background: rgba(107,114,128,0.15); color: var(--gray-300); }
-
-    /* Empty state */
-    .empty { text-align: center; padding: 32px; color: var(--gray-500); }
-    .empty i { font-size: 2rem; margin-bottom: 12px; display: block; }
-    .empty a { color: var(--red); text-decoration: none; font-weight: 500; }
-
-    /* Tabs (for switching panels) */
-    .tab-btns { display: none; }
-
-    /* Loading */
-    .loading { color: var(--gray-500); font-size: 0.875rem; padding: 16px 0; }
-  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" />
+  <link rel="stylesheet" href="../../css/member-dashboard.css" />
 </head>
 <body>
 <div class="layout">
@@ -94,16 +19,19 @@
 
     <nav class="sidebar-nav">
       <div class="nav-label">Member</div>
-      <a class="nav-link active" onclick="showSection('dashboard')"><i class="fa-solid fa-grid-2"></i> Dashboard</a>
+      <a class="nav-link active" data-section="dashboard"><i class="fa-solid fa-grid-2"></i> Dashboard</a>
       <a class="nav-link" href="../booking/calendar.html"><i class="fa-solid fa-calendar-plus"></i> Book a Session</a>
-      <a class="nav-link" onclick="showSection('bookings')"><i class="fa-solid fa-calendar-check"></i> My Bookings</a>
-      <a class="nav-link" onclick="showSection('programs')"><i class="fa-solid fa-dumbbell"></i> My Programs</a>
+      <a class="nav-link" data-section="bookings"><i class="fa-solid fa-calendar-check"></i> My Bookings</a>
+      <a class="nav-link" data-section="programs"><i class="fa-solid fa-dumbbell"></i> My Programs</a>
 
       <div class="nav-label">Account</div>
-      <a class="nav-link" onclick="showSection('subscriptions')"><i class="fa-solid fa-credit-card"></i> My Subscription</a>
-      <a class="nav-link" onclick="showSection('orders')"><i class="fa-solid fa-receipt"></i> My Orders</a>
-      <a class="nav-link" onclick="showSection('notifications')"><i class="fa-solid fa-bell"></i> Notifications</a>
+      <a class="nav-link" data-section="subscriptions"><i class="fa-solid fa-credit-card"></i> My Subscription</a>
+      <a class="nav-link" data-section="orders"><i class="fa-solid fa-receipt"></i> My Orders</a>
+      <a class="nav-link" data-section="notifications"><i class="fa-solid fa-bell"></i> Notifications</a>
       <a class="nav-link" href="profile.html"><i class="fa-solid fa-user"></i> Profile & Settings</a>
+
+      <div class="nav-label">Site</div>
+      <a class="nav-link" href="/public/index.html"><i class="fa-solid fa-arrow-left"></i> Back to Site</a>
     </nav>
 
     <div class="sidebar-user">
@@ -112,7 +40,7 @@
         <div class="user-name" id="userName">Loading…</div>
         <div class="user-role" id="userRole">Member</div>
       </div>
-      <button class="logout-btn" onclick="handleLogout()" title="Sign out">
+      <button class="logout-btn" title="Sign out">
         <i class="fa-solid fa-arrow-right-from-bracket"></i>
       </button>
     </div>
@@ -122,7 +50,7 @@
   <main class="main">
 
     <!-- Dashboard Overview -->
-    <div id="section-dashboard">
+    <div id="section-dashboard" class="section-panel active">
       <div class="page-header">
         <h1 class="page-title">Welcome Back, <span id="firstName">Athlete</span></h1>
         <p class="page-subtitle">Here's what's happening with your training.</p>
@@ -162,14 +90,14 @@
       <div class="panel">
         <div class="panel-header">
           <span class="panel-title">Recent Notifications</span>
-          <a class="panel-link" onclick="showSection('notifications')">View all</a>
+          <a class="panel-link" data-section="notifications">View all</a>
         </div>
         <div id="notificationsList"><div class="loading">Loading…</div></div>
       </div>
     </div>
 
     <!-- My Bookings -->
-    <div id="section-bookings" style="display:none">
+    <div id="section-bookings" class="section-panel">
       <div class="page-header">
         <h1 class="page-title">My Bookings</h1>
         <p class="page-subtitle">Your upcoming and past training sessions.</p>
@@ -180,7 +108,7 @@
     </div>
 
     <!-- My Programs -->
-    <div id="section-programs" style="display:none">
+    <div id="section-programs" class="section-panel">
       <div class="page-header">
         <h1 class="page-title">My Programs</h1>
         <p class="page-subtitle">Online programs you're enrolled in.</p>
@@ -191,7 +119,7 @@
     </div>
 
     <!-- Subscriptions -->
-    <div id="section-subscriptions" style="display:none">
+    <div id="section-subscriptions" class="section-panel">
       <div class="page-header">
         <h1 class="page-title">My Subscription</h1>
         <p class="page-subtitle">Your current plan and billing details.</p>
@@ -202,7 +130,7 @@
     </div>
 
     <!-- Orders -->
-    <div id="section-orders" style="display:none">
+    <div id="section-orders" class="section-panel">
       <div class="page-header">
         <h1 class="page-title">My Orders</h1>
         <p class="page-subtitle">Complete purchase history.</p>
@@ -213,7 +141,7 @@
     </div>
 
     <!-- Notifications -->
-    <div id="section-notifications" style="display:none">
+    <div id="section-notifications" class="section-panel">
       <div class="page-header">
         <h1 class="page-title">Notifications</h1>
       </div>
@@ -226,94 +154,6 @@
 </div>
 
 <script src="../../js/api.js"></script>
-<script>
-let currentUser = null;
-
-async function init() {
-  currentUser = await requireLogin();
-  if (!currentUser) return;
-
-  // Populate sidebar user
-  document.getElementById('userName').textContent    = `${currentUser.first_name} ${currentUser.last_name}`;
-  document.getElementById('userRole').textContent    = currentUser.role === 'admin' ? 'Administrator' : 'Member';
-  document.getElementById('userInitials').textContent = currentUser.first_name[0] + currentUser.last_name[0];
-  document.getElementById('firstName').textContent   = currentUser.first_name;
-
-  loadDashboard();
-}
-
-async function loadDashboard() {
-  const [bookingsRes, notifRes, subRes, progRes] = await Promise.allSettled([
-    api.bookings.myBookings(),
-    api.member.notifications(),
-    api.member.subscriptions(),
-    api.programs.mine()
-  ]);
-
-  // Stats
-  const bookings = bookingsRes.value?.bookings || [];
-  const upcoming = bookings.filter(b => b.status === 'confirmed' && new Date(b.starts_at) > new Date());
-  document.getElementById('statUpcoming').textContent = upcoming.length;
-  document.getElementById('statTotal').textContent    = bookings.filter(b => b.status === 'completed').length;
-  document.getElementById('statPrograms').textContent = (progRes.value?.enrollments || []).filter(e => e.status === 'active').length;
-
-  // Plan stat
-  const subs = subRes.value?.subscriptions || [];
-  const activeSub = subs.find(s => s.status === 'active');
-  if (activeSub) {
-    document.getElementById('statPlan').textContent    = activeSub.plan_name;
-    document.getElementById('statPlanSub').textContent = `${formatPrice(activeSub.price_cents)}/${activeSub.billing_interval}`;
-  } else {
-    document.getElementById('statPlan').textContent    = 'None';
-  }
-
-  // Upcoming bookings list
-  const upcomingEl = document.getElementById('upcomingBookingsList');
-  if (upcoming.length === 0) {
-    upcomingEl.innerHTML = `<div class="empty"><i class="fa-regular fa-calendar"></i>No upcoming sessions. <a href="../booking/calendar.html">Book one now →</a></div>`;
-  } else {
-    upcomingEl.innerHTML = upcoming.slice(0, 5).map(b => `
-      <div class="booking-row">
-        <div class="booking-icon"><i class="fa-solid fa-baseball"></i></div>
-        <div class="booking-info">
-          <div class="booking-name">${b.service_name}</div>
-          <div class="booking-meta">${formatDate(b.starts_at)} · ${b.coach_name || 'Coach TBD'}</div>
-        </div>
-        <span class="badge badge-confirmed">Confirmed</span>
-      </div>
-    `).join('');
-  }
-
-  // Notifications preview
-  const notifs = (notifRes.value?.notifications || []).slice(0, 4);
-  const notifEl = document.getElementById('notificationsList');
-  if (notifs.length === 0) {
-    notifEl.innerHTML = `<div class="empty"><i class="fa-regular fa-bell-slash"></i>No notifications yet.</div>`;
-  } else {
-    notifEl.innerHTML = notifs.map(n => `
-      <div class="booking-row">
-        <div class="booking-icon" style="${n.read ? 'opacity:0.4' : ''}"><i class="fa-solid fa-bell"></i></div>
-        <div class="booking-info">
-          <div class="booking-name">${n.title}</div>
-          <div class="booking-meta">${n.body || ''}</div>
-        </div>
-      </div>
-    `).join('');
-  }
-}
-
-function showSection(name) {
-  document.querySelectorAll('[id^="section-"]').forEach(el => el.style.display = 'none');
-  document.getElementById(`section-${name}`).style.display = 'block';
-  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-}
-
-async function handleLogout() {
-  await api.auth.logout();
-  location.href = '../auth/login.html';
-}
-
-init();
-</script>
+<script src="../../js/pages/member-dashboard.js"></script>
 </body>
 </html>
