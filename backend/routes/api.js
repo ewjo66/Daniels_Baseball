@@ -2,6 +2,13 @@ const express = require('express');
 const router  = express.Router();
 const pool    = require('../db/pool');
 const { requireAuth } = require('../middleware/auth');
+const { validate, z } = require('../middleware/validate');
+
+const profileSchema = z.object({
+  first_name: z.string().min(1).max(50).trim().optional(),
+  last_name:  z.string().min(1).max(50).trim().optional(),
+  phone:      z.string().max(20).trim().nullable().optional(),
+});
 
 // ══════════════════════════════════════════════════════════
 //  SERVICES  (matches Wix service pages)
@@ -115,7 +122,7 @@ router.get('/member/profile', requireAuth, async (req, res) => {
 });
 
 // PATCH /api/member/profile  (matches Wix "Account Settings")
-router.patch('/member/profile', requireAuth, async (req, res) => {
+router.patch('/member/profile', requireAuth, validate(profileSchema), async (req, res) => {
   try {
     const { first_name, last_name, phone } = req.body;
     const result = await pool.query(

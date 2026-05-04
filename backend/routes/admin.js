@@ -2,6 +2,15 @@ const express = require('express');
 const router  = express.Router();
 const pool    = require('../db/pool');
 const { requireAdmin } = require('../middleware/auth');
+const { validate, z } = require('../middleware/validate');
+
+const slotSchema = z.object({
+  service_id: z.coerce.number().int().positive('service_id must be a valid service.'),
+  coach_name: z.string().max(100).trim().optional(),
+  starts_at:  z.string().datetime({ offset: true, message: 'starts_at must be a valid ISO datetime.' }),
+  ends_at:    z.string().datetime({ offset: true, message: 'ends_at must be a valid ISO datetime.' }),
+  capacity:   z.coerce.number().int().min(1).max(500).optional(),
+});
 
 router.use(requireAdmin);
 
@@ -121,12 +130,9 @@ router.get('/slots', async (req, res) => {
 });
 
 // POST /api/admin/slots
-router.post('/slots', async (req, res) => {
+router.post('/slots', validate(slotSchema), async (req, res) => {
   try {
     const { service_id, coach_name, starts_at, ends_at, capacity } = req.body;
-    if (!service_id || !starts_at || !ends_at) {
-      return res.status(400).json({ error: 'service_id, starts_at, and ends_at are required.' });
-    }
     const result = await pool.query(
       `INSERT INTO booking_slots (service_id, coach_name, starts_at, ends_at, capacity)
        VALUES ($1, $2, $3, $4, $5) RETURNING *`,

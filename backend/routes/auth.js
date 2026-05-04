@@ -4,20 +4,38 @@ const crypto   = require('crypto');
 const router   = express.Router();
 const pool     = require('../db/pool');
 const { requireAuth } = require('../middleware/auth');
+const { validate, z } = require('../middleware/validate');
+
+const passwordSchema = z.string()
+  .min(8, 'Password must be at least 8 characters.')
+  .max(128)
+  .regex(/[A-Z]/, 'Password must contain at least one uppercase letter.')
+  .regex(/[a-z]/, 'Password must contain at least one lowercase letter.')
+  .regex(/[0-9]/, 'Password must contain at least one number.');
+
+const registerSchema = z.object({
+  first_name: z.string().min(1, 'First name is required.').max(50).trim(),
+  last_name:  z.string().min(1, 'Last name is required.').max(50).trim(),
+  email:      z.string().email('Please provide a valid email address.'),
+  password:   passwordSchema,
+  phone:      z.string().max(20).trim().optional(),
+});
+
+const emailSchema = z.object({
+  email: z.string().email('Please provide a valid email address.'),
+});
+
+const resetPasswordSchema = z.object({
+  token:    z.string().min(1, 'Token is required.'),
+  password: passwordSchema,
+});
 
 const SALT_ROUNDS = 12;
 
 // ─── POST /api/auth/register ──────────────────────────────
-router.post('/register', async (req, res) => {
+router.post('/register', validate(registerSchema), async (req, res) => {
   try {
     const { first_name, last_name, email, password, phone } = req.body;
-
-    if (!first_name || !last_name || !email || !password) {
-      return res.status(400).json({ error: 'All fields are required.' });
-    }
-    if (password.length < 8) {
-      return res.status(400).json({ error: 'Password must be at least 8 characters.' });
-    }
 
     // Check if email already exists
     const existing = await pool.query('SELECT id FROM users WHERE email = $1', [email.toLowerCase()]);
@@ -130,10 +148,9 @@ router.get('/me', requireAuth, async (req, res) => {
 });
 
 // ─── POST /api/auth/forgot-password ──────────────────────
-router.post('/forgot-password', async (req, res) => {
+router.post('/forgot-password', validate(emailSchema), async (req, res) => {
   try {
     const { email } = req.body;
-    if (!email) return res.status(400).json({ error: 'Email is required.' });
 
     const result = await pool.query('SELECT id FROM users WHERE email = $1', [email.toLowerCase()]);
 
@@ -158,8 +175,6 @@ router.post('/forgot-password', async (req, res) => {
     // const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
     // await resend.emails.send({ ... });
 
-    console.log(`Password reset token for user ${user.id}: ${token}`); // Remove in production
-
     res.json({ message: 'If that email exists, a reset link has been sent.' });
 
   } catch (err) {
@@ -169,16 +184,9 @@ router.post('/forgot-password', async (req, res) => {
 });
 
 // ─── POST /api/auth/reset-password ───────────────────────
-router.post('/reset-password', async (req, res) => {
+router.post('/reset-password', validate(resetPasswordSchema), async (req, res) => {
   try {
     const { token, password } = req.body;
-
-    if (!token || !password) {
-      return res.status(400).json({ error: 'Token and new password are required.' });
-    }
-    if (password.length < 8) {
-      return res.status(400).json({ error: 'Password must be at least 8 characters.' });
-    }
 
     const result = await pool.query(
       `SELECT * FROM password_reset_tokens

@@ -2,10 +2,17 @@ const express = require('express');
 const router  = express.Router();
 const pool    = require('../db/pool');
 const { requireAuth, requireAdmin } = require('../middleware/auth');
+const { validate, z } = require('../middleware/validate');
+
+const slotsQuerySchema = z.object({
+  service_id: z.coerce.number().int().positive().optional(),
+  from:       z.string().datetime({ offset: true }).optional(),
+  to:         z.string().datetime({ offset: true }).optional(),
+});
 
 // ─── GET /api/bookings/slots ──────────────────────────────
 // Public: Get available slots for a service (for the booking calendar)
-router.get('/slots', async (req, res) => {
+router.get('/slots', validate(slotsQuerySchema, 'query'), async (req, res) => {
   try {
     const { service_id, from, to } = req.query;
 

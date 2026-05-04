@@ -24,7 +24,25 @@ app.use(morgan('dev', { stream: { write: msg => logger.http(msg.trim()) } }));
 
 // ─── Security ─────────────────────────────────────────────
 app.use(helmet({
-  contentSecurityPolicy: false // adjust if you need inline scripts
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc:  ["'self'"],
+      scriptSrc:   ["'self'"],
+      styleSrc:    ["'self'", "fonts.googleapis.com", "cdnjs.cloudflare.com"],
+      fontSrc:     ["'self'", "fonts.gstatic.com", "cdnjs.cloudflare.com"],
+      imgSrc:      ["'self'", "data:"],
+      connectSrc:  ["'self'", "api.web3forms.com"],
+      frameSrc:    ["'none'"],
+      objectSrc:   ["'none'"],
+      baseUri:     ["'self'"],
+      formAction:  ["'self'"],
+    },
+  },
+  hsts: {
+    maxAge: 31536000,
+    includeSubDomains: true,
+    preload: true,
+  },
 }));
 
 // ─── CORS ─────────────────────────────────────────────────
@@ -33,20 +51,51 @@ app.use(cors({
   credentials: true, // required for cookies/sessions
 }));
 
+// ─── HTTPS Redirect (production) ─────────────────────────
+if (process.env.NODE_ENV === 'production') {
+  app.use((req, res, next) => {
+    if (req.headers['x-forwarded-proto'] !== 'https') {
+      return res.redirect(301, `https://${req.headers.host}${req.url}`);
+    }
+    next();
+  });
+}
+
 // ─── Rate Limiting ────────────────────────────────────────
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max:      10,
+  message:  { error: 'Too many login attempts. Please try again in 15 minutes.' }
+});
+
+const registerLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max:      5,
+  message:  { error: 'Too many accounts created from this IP. Please try again later.' }
+});
+
+const forgotPasswordLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max:      5,
+  message:  { error: 'Too many password reset requests. Please try again in an hour.' }
+});
+
 const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
+  windowMs: 15 * 60 * 1000,
   max:      20,
   message:  { error: 'Too many attempts. Please try again in 15 minutes.' }
 });
 
 const apiLimiter = rateLimit({
-  windowMs: 60 * 1000, // 1 minute
+  windowMs: 60 * 1000,
   max:      100
 });
 
-app.use('/api/auth', authLimiter);
-app.use('/api',      apiLimiter);
+app.use('/api/auth/login',           loginLimiter);
+app.use('/api/auth/register',        registerLimiter);
+app.use('/api/auth/forgot-password', forgotPasswordLimiter);
+app.use('/api/auth',                 authLimiter);
+app.use('/api',                      apiLimiter);
 
 // ─── Stripe Webhook (must come BEFORE express.json()) ─────
 // Stripe needs the raw body to verify signatures
@@ -69,7 +118,7 @@ app.use(session({
   cookie: {
     httpOnly: true,                                          // JS cannot read this cookie
     secure:   process.env.NODE_ENV === 'production',         // HTTPS only in prod
-    sameSite: process.env.NODE_ENV === 'production' ? 'lax' : 'lax',
+    sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
     maxAge:   7 * 24 * 60 * 60 * 1000                       // 7 days
   }
 }));
